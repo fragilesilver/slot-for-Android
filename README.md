@@ -74,13 +74,13 @@ If you test this Android release on unlisted hardware or different aspect ratios
 
 ---
 
-## AI Transparency Statement
+## AI Disclosure
 
 ### Upstream Project
 The primary Rust frontend was created with assistance from Claude Opus, with every line reviewed and maintained by the author. Upstream documentation was hand-crafted. The project was built as a passion project to relive the feel of the GBA SP, offered freely to the community.
 
 ### Android Port
-The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7), and release decisions were driven manually. Unlike the upstream documentation, the accompanying Android markdown files were drafted with AI assistance.
+The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7), and release decisions were driven manually.
 
 ---
 
