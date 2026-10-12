@@ -1,6 +1,6 @@
 # Changelog
 
-## [slot for Android 1.0.0](https://github.com/fragilesilver/slot-for-Android/releases/tag/v1.0.0)
+## [[slot for Android 1.0.0](https://github.com/fragilesilver/slot-for-Android/releases/tag/v1.0.0)](https://github.com/fragilesilver/slot-for-Android/releases/tag/android-v1.0.0)
 
 First release of the Android port, built on slot 1.6.0.
 
