@@ -18,7 +18,7 @@ A dedicated mobile port bringing the author's [slot](https://github.com/BrandonK
 
 > [!NOTE]
 > This repository houses the Android port of `slot`. While the shelf layouts, aesthetic, and emulation cores stem from the author's original release, this build introduces on-screen input, native Android storage handling, and foldable display awareness. Detailed installation procedures, configuration guides, and build scripts are documented in [ANDROID.md](ANDROID.md).  
-> *Crafted in Brunei Darussalam by a cat with pink headphones.*
+> *Forked in Brunei Darussalam by a cat with pink headphones.*
 
 > [!WARNING]
 > **Uncompressed Media Required:** Game files must be extracted beforehand. The launcher does not parse archive formats like `.zip` or `.7z`.
