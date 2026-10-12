@@ -1,10 +1,10 @@
 <div align="center">
 <img src=".github/resources/banner.png" width="100%" alt="slot. A bespoke, Game Boy-centric frontend for the Anbernic RG SP.">
-<a href="LICENSE"><img src="https://img.shields.io/github/license/BrandonKowalski/slot?style=for-the-badge&labelColor=242429&color=4d4d57" height="36" alt="License"></a>
+<!--<a href="LICENSE"><img src="https://img.shields.io/github/license/fragilesilver/slot-for-Android?style=for-the-badge&labelColor=242429&color=4d4d57" height="36" alt="License"></a>
 <a href="https://github.com/BrandonKowalski/slot/stargazers"><img src="https://img.shields.io/github/stars/BrandonKowalski/slot?style=for-the-badge&labelColor=242429&color=4d4d57" height="36" alt="Stars"></a>
 <a href="https://github.com/BrandonKowalski/slot/releases"><img src="https://img.shields.io/github/downloads/BrandonKowalski/slot/total?style=for-the-badge&labelColor=242429&color=4d4d57" height="36" alt="Downloads"></a>
 <a href="https://slot-cfw.fyi"><img src="https://img.shields.io/badge/Guide-slot--cfw.fyi-4d4d57?style=for-the-badge&labelColor=242429" height="36" alt="Guide"></a>
-<a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-4d4d57?style=for-the-badge&labelColor=242429" height="36" alt="Changelog"></a>
+<a href="CHANGELOG.md"><img src="https://img.shields.io/badge/Changelog-4d4d57?style=for-the-badge&labelColor=242429" height="36" alt="Changelog"></a>-->
 </div>
 
 # slot for Android
@@ -75,13 +75,13 @@ If you test this Android release on unlisted hardware or different aspect ratios
 
 ---
 
-## AI Transparency Statement
+## AI Disclosure
 
 ### Upstream Project
 The primary Rust frontend was created with assistance from Claude Opus, with every line reviewed and maintained by the author. Upstream documentation was hand-crafted. The project was built as a passion project to relive the feel of the GBA SP, offered freely to the community.
 
 ### Android Port
-The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7), and release decisions were driven manually. Unlike the upstream documentation, the accompanying Android markdown files were drafted with AI assistance.
+The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7), and release decisions were driven manually.
 
 ---
 
