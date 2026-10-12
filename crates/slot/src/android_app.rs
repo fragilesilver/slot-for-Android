@@ -120,9 +120,9 @@ fn android_main(app: AndroidApp) {
             shared
         }
         false => {
-            if android_storage::first_ask(&private) {
-                android_storage::ask_all_files(app.vm_as_ptr(), app.activity_as_ptr());
-            }
+            // Asked on every launch until it is granted: a once-per-install marker could outlive
+            // an uninstall (backup restore) and leave a blank shelf with no way to the page.
+            android_storage::ask_all_files(app.vm_as_ptr(), app.activity_as_ptr());
             private.clone()
         }
     };

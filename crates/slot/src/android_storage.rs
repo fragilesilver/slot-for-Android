@@ -11,7 +11,6 @@ use jni::JavaVM;
 
 const PACKAGE: &str = "com.fragilesilver.slot";
 const SHARED: &str = "/storage/emulated/0/slot";
-const ASKED: &str = ".asked_all_files_access";
 
 pub fn shared_root() -> PathBuf {
     PathBuf::from(SHARED)
@@ -112,16 +111,6 @@ pub fn pick_picture(vm: *mut c_void, activity: *mut c_void, dest: &Path) {
         let _ = env.exception_clear();
         cancel();
     }
-}
-
-/// True once per install: the permission page is shown once, not on every launch.
-pub fn first_ask(private: &Path) -> bool {
-    let marker = private.join(ASKED);
-    if marker.exists() {
-        return false;
-    }
-    let _ = std::fs::write(marker, b"");
-    true
 }
 
 /// Copies what the app-private folder holds into the shared folder, skipping anything that is

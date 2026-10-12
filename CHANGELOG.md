@@ -8,6 +8,7 @@ First release of the Android port, built on slot 1.6.0.
 - Runs slot on an Android phone or foldable: the shelf, cartridges, slot animation, cores (mGBA and gpSP), saves, states, rewind, fast-forward and the quick menu.
 - On-screen controls laid out for the screen (side bars, below the picture, or floating over it when unfolded), plus gamepad and keyboard. The shoulder row is L, L2, R2, R: hold R2 to fast forward (double-tap to lock it on), hold L2 to rewind. Opacity and size are adjustable; touch haptics can be switched off.
 - First launch after an install: the menus no longer come up blank once All files access has been granted.
+- The All files access page is offered on every launch until it is granted, so a reinstall can no longer leave a blank shelf without asking.
 - Fullscreen, with the Menu button at the top centre. Leaving the app and coming back keeps everything as it was.
 - Games and everything else live in `/sdcard/slot/` once All files access is granted.
 - Pause menu in game: save / load state, browse states, change core, controls, screen, cheats, achievements, back to shelf.
