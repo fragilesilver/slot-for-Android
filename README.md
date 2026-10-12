@@ -23,6 +23,7 @@ A dedicated mobile port bringing the author's [slot](https://github.com/BrandonK
 > [!WARNING]
 > **Uncompressed Media Required:** Game files must be extracted beforehand. The launcher does not parse archive formats like `.zip` or `.7z`.
 
+* Android guide: [fragilesilver.github.io/slot-for-Android](https://fragilesilver.github.io/slot-for-Android/)
 * Upstream usage manual: [slot-cfw.fyi](https://slot-cfw.fyi)
 * Project release notes: [CHANGELOG.md](CHANGELOG.md)
 
