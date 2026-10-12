@@ -1,0 +1,109 @@
+--- a/src/gba/cheats.c
++++ b/src/gba/cheats.c
+@@ -13,10 +13,17 @@
+ 
+ #define MAX_LINE_LENGTH 128
+ 
++// slot reads these (through slot_cheat_stats in the libretro port) to tell a master code that
++// runs from one whose hook is never reached, which is what a code for another ROM revision does.
++uint32_t slotCheatHookAddress = 0;
++uint32_t slotCheatHookHits = 0;
++
+ static void _addBreakpoint(struct mCheatDevice* device, struct GBACheatSet* cheats) {
+ 	if (!device->p || !cheats->hook) {
+ 		return;
+ 	}
++	slotCheatHookAddress = cheats->hook->address;
++	slotCheatHookHits = 0;
+ 	++cheats->hook->reentries;
+ 	if (cheats->hook->reentries > 1) {
+ 		return;
+--- a/src/gba/gba.c
++++ b/src/gba/gba.c
+@@ -49,6 +49,8 @@
+ static void GBAHitStub(struct ARMCore* cpu, uint32_t opcode);
+ static void GBAIllegal(struct ARMCore* cpu, uint32_t opcode);
+ static void GBABreakpoint(struct ARMCore* cpu, int immediate);
++
++extern uint32_t slotCheatHookHits;
+ static void GBATestIRQNoDelay(struct ARMCore* cpu);
+ 
+ static void _triggerIRQ(struct mTiming*, void* user, uint32_t cyclesLate);
+@@ -948,6 +950,7 @@
+ 				}
+ 			}
+ 			if (hook) {
++				++slotCheatHookHits;
+ 				ARMRunFake(cpu, hook->patchedOpcode);
+ 			}
+ 			return;
+--- a/src/platform/libretro/libretro.c
++++ b/src/platform/libretro/libretro.c
+@@ -2932,7 +2932,32 @@
+ 	return success;
+ }
+ 
++extern uint32_t slotCheatHookAddress;
++extern uint32_t slotCheatHookHits;
++extern uint32_t slotCheatWrites;
++extern uint32_t slotCheatLastAddress;
++extern uint32_t slotCheatLastValue;
++static uint32_t slotCheatLines = 0;
++
++// Not part of libretro: slot looks this up by name (the retro_ prefix keeps it past link.T). `address` is the master code's hook (0 when
++// the list has none), `hits` how many times the game has run it since it was installed, and
++// `lines` how many lines of code mGBA accepted.
++RETRO_API void retro_slot_cheat_stats(uint32_t* address, uint32_t* hits, uint32_t* lines, uint32_t* writes, uint32_t* last_address, uint32_t* last_value) {
++	*address = slotCheatHookAddress;
++	*hits = slotCheatHookHits;
++	*lines = slotCheatLines;
++	*writes = slotCheatWrites;
++	*last_address = slotCheatLastAddress;
++	*last_value = slotCheatLastValue;
++}
++
+ void retro_cheat_reset(void) {
++	slotCheatHookAddress = 0;
++	slotCheatHookHits = 0;
++	slotCheatLines = 0;
++	slotCheatWrites = 0;
++	slotCheatLastAddress = 0;
++	slotCheatLastValue = 0;
+ 	struct mCheatDevice* device = core->cheatDevice(core);
+ 	// mCheatDeviceClear frees each set without running its remove hook, so a GBA master
+ 	// code's breakpoint was left in ROM with nothing behind it: the next write of cheats took
+@@ -2969,7 +2994,9 @@
+ 			}
+ 			if ((pos == 13 && (realCode[pos] == ' ' || !realCode[pos])) || pos == 17) {
+ 				realCode[pos] = '\0';
+-				mCheatAddLine(cheatSet, realCode, 0);
++				if (mCheatAddLine(cheatSet, realCode, 0)) {
++					++slotCheatLines;
++				}
+ 				pos = 0;
+ 				continue;
+ 			}
+--- a/src/core/cheats.c
++++ b/src/core/cheats.c
+@@ -639,6 +639,11 @@
+ }
+ #endif
+ 
++// Read by the libretro port's retro_slot_cheat_stats: how often a code actually wrote memory.
++uint32_t slotCheatWrites = 0;
++uint32_t slotCheatLastAddress = 0;
++uint32_t slotCheatLastValue = 0;
++
+ void mCheatRefresh(struct mCheatDevice* device, struct mCheatSet* cheats) {
+ 	if (cheats->enabled) {
+ 		_patchROM(device, cheats);
+@@ -775,6 +780,9 @@
+ 
+ 			if (performAssignment) {
+ 				_writeMem(device->p, address, cheat->width, value);
++				++slotCheatWrites;
++				slotCheatLastAddress = address;
++				slotCheatLastValue = value;
+ 			}
+ 
+ 			address += cheat->addressOffset;
