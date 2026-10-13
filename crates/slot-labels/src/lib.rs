@@ -219,8 +219,9 @@ fn publish(target: &Path, bytes: &[u8]) -> Result<(), Error> {
         Err(e) if e.error.kind() == std::io::ErrorKind::AlreadyExists => Ok(()),
         // Older vendor exFAT drivers reject RENAME_NOREPLACE and hard links. Their
         // ordinary rename is atomic; the single label worker checks again immediately
-        // before publishing so an already present custom label is preserved.
-        Err(e) if matches!(e.error.raw_os_error(), Some(1 | 22 | 38 | 95)) => {
+        // before publishing so an already present custom label is preserved. Android's FUSE
+        // shared storage (Android 12 and older) answers a hard link with EACCES (13).
+        Err(e) if matches!(e.error.raw_os_error(), Some(1 | 13 | 22 | 38 | 95)) => {
             publish_legacy(e.file, target)
         }
         Err(e) => Err(Error::Storage(e.error)),
