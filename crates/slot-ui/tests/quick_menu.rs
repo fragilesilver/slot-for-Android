@@ -180,7 +180,8 @@ fn the_values_read_as_the_menu_prints_them() {
             "30%",
             "70%",
             "80%",
-            "120%"
+            "120%",
+            "Auto"
         ]
     );
     assert_eq!(QuickValue::flag(true), QuickValue::On);

@@ -10,7 +10,7 @@ use slot_retro::LinkChannel;
 use slot_store::{
     format_stamp, read_slot_state, scan, write_slot_state, ButtonRole, Cart, Core, GbPalette,
     Platform, Shader,
-    SlotState, StateEntry, StateRing, Theme, BLUE_LIGHT_MAX, BRIGHTNESS_MAX, FF_SPEEDS, RING_MAX,
+    SlotState, TouchMode, StateEntry, StateRing, Theme, BLUE_LIGHT_MAX, BRIGHTNESS_MAX, FF_SPEEDS, RING_MAX,
     VOLUME_MAX,
 };
 use slot_ui::{
@@ -752,6 +752,11 @@ impl App {
             QuickRow::TouchOpacity => Some(QuickValue::percent(self.state.touch_opacity)),
             QuickRow::TouchSize => Some(QuickValue::percent(self.state.touch_size)),
             QuickRow::TouchHaptics => Some(QuickValue::flag(self.state.touch_haptics)),
+            QuickRow::TouchMode => Some(match self.state.touch_mode {
+                TouchMode::Auto => QuickValue::Auto,
+                TouchMode::On => QuickValue::On,
+                TouchMode::Off => QuickValue::Off,
+            }),
             QuickRow::Vibration => Some(QuickValue::percent(self.state.vibration)),
             QuickRow::Favourite => self
                 .selected_stem()
@@ -1353,6 +1358,11 @@ impl App {
         self.link_player
     }
 
+    /// When the on-screen controls show (Controls > Touch Controls).
+    pub fn touch_mode(&self) -> TouchMode {
+        self.state.touch_mode
+    }
+
     pub fn touch_style(&self) -> (f32, f32) {
         (
             self.state.touch_opacity as f32 / 100.0,
@@ -1743,6 +1753,7 @@ impl App {
             | QuickRow::TouchOpacity
             | QuickRow::TouchSize
             | QuickRow::TouchHaptics
+            | QuickRow::TouchMode
             | QuickRow::Vibration
             | QuickRow::PauseAchievements
             | QuickRow::Shelf => {}
@@ -1797,6 +1808,7 @@ impl App {
             }
             QuickRow::TurboButtons => s.turbo = !s.turbo,
             QuickRow::TouchHaptics => s.touch_haptics = !s.touch_haptics,
+            QuickRow::TouchMode => s.touch_mode = s.touch_mode.step(right),
             QuickRow::Vibration => {
                 const STEPS: [u8; 4] = [30, 50, 70, 100];
                 s.vibration = step_in(&STEPS, s.vibration, right);
@@ -3408,6 +3420,7 @@ impl App {
                         | QuickRow::TouchOpacity
                         | QuickRow::TouchSize
                         | QuickRow::TouchHaptics
+                        | QuickRow::TouchMode
                         | QuickRow::Vibration
                         | QuickRow::GbaShader
                         | QuickRow::GbShader
@@ -3464,6 +3477,7 @@ impl App {
                 | QuickRow::TouchOpacity
                 | QuickRow::TouchSize
                 | QuickRow::TouchHaptics
+                | QuickRow::TouchMode
                 | QuickRow::Vibration => {
                     self.change_setting(row, true);
                 }

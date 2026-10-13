@@ -25,7 +25,7 @@ pub use platform::Platform;
 pub use ring::{StateEntry, StateRing, RING_MAX};
 pub use scan::{initial, is_hidden, listing, scan, sort_key, Cart, StoreError};
 pub use slot_state::{
-    ButtonRole,
+    ButtonRole, TouchMode,
     read_slot_state, write_slot_state, Shader, SlotState, BLUE_LIGHT_MAX, BRIGHTNESS_MAX,
     FF_SPEEDS, FF_SPEED_DEFAULT, UTC_OFFSET_MAX, UTC_OFFSET_MIN, VOLUME_MAX,
 };

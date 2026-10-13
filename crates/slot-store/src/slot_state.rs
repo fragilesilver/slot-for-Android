@@ -15,6 +15,40 @@ pub const FF_SPEEDS: [u8; 4] = [2, 3, 4, 6];
 
 pub const FF_SPEED_DEFAULT: u8 = 6;
 
+/// When the on-screen controls show: `Auto` hides them while a pad or keyboard is in use and
+/// brings them back on a touch; `On` and `Off` pin them.
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+pub enum TouchMode {
+    Auto,
+    On,
+    Off,
+}
+
+impl TouchMode {
+    pub fn name(self) -> &'static str {
+        match self {
+            TouchMode::Auto => "auto",
+            TouchMode::On => "on",
+            TouchMode::Off => "off",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<TouchMode> {
+        match s.trim().to_ascii_lowercase().as_str() {
+            "auto" => Some(TouchMode::Auto),
+            "on" => Some(TouchMode::On),
+            "off" => Some(TouchMode::Off),
+            _ => None,
+        }
+    }
+
+    pub fn step(self, right: bool) -> TouchMode {
+        const ALL: [TouchMode; 3] = [TouchMode::Auto, TouchMode::On, TouchMode::Off];
+        let at = ALL.iter().position(|m| *m == self).unwrap_or(0);
+        ALL[if right { (at + 1) % 3 } else { (at + 2) % 3 }]
+    }
+}
+
 /// What an on-screen X / Y button does: slot's own (hold X for turbo A, Y for turbo B), or
 /// press A or B instead.
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
@@ -85,6 +119,7 @@ pub struct SlotState {
     pub touch_opacity: u8,
     pub touch_size: u8,
     pub touch_haptics: bool,
+    pub touch_mode: TouchMode,
     /// How strong the phone's motor runs, in percent: touch ticks and game rumble.
     pub vibration: u8,
 }
@@ -168,6 +203,7 @@ impl Default for SlotState {
             touch_opacity: 100,
             touch_size: 100,
             touch_haptics: true,
+            touch_mode: TouchMode::Auto,
             vibration: 70,
         }
     }
@@ -219,8 +255,8 @@ pub fn write_slot_state(root: &Path, s: &SlotState) -> std::io::Result<()> {
     // the reader tolerates the key's absence (a card that never starred anything has no line).
     let mut text = text;
     text.push_str(&format!(
-        "touch_opacity={}\ntouch_size={}\ntouch_haptics={}\nvibration={}\n",
-        s.touch_opacity, s.touch_size, s.touch_haptics as u8, s.vibration
+        "touch_opacity={}\ntouch_size={}\ntouch_haptics={}\ntouch_mode={}\nvibration={}\n",
+        s.touch_opacity, s.touch_size, s.touch_haptics as u8, s.touch_mode.name(), s.vibration
     ));
     for stem in &s.favorites {
         if !stem.contains('\n') {
@@ -261,6 +297,7 @@ fn parse(text: &str) -> Option<SlotState> {
     let mut touch_opacity = None;
     let mut touch_size = None;
     let mut touch_haptics = None;
+    let mut touch_mode = None;
     let mut vibration = None;
     for line in text.lines().filter(|l| !l.is_empty()) {
         let Some((key, value)) = line.split_once('=') else {
@@ -294,6 +331,7 @@ fn parse(text: &str) -> Option<SlotState> {
                 touch_opacity = value.parse::<u8>().ok().filter(|v| (20..=100).contains(v))
             }
             "touch_haptics" => touch_haptics = flag(value),
+            "touch_mode" => touch_mode = TouchMode::parse(value),
             "vibration" => vibration = value.parse::<u8>().ok().filter(|v| (10..=150).contains(v)),
             "touch_size" => touch_size = value.parse::<u8>().ok().filter(|v| (60..=140).contains(v)),
             "favorite" => {
@@ -340,6 +378,7 @@ fn parse(text: &str) -> Option<SlotState> {
         touch_opacity: touch_opacity.unwrap_or(fallback.touch_opacity),
         touch_size: touch_size.unwrap_or(fallback.touch_size),
         touch_haptics: touch_haptics.unwrap_or(fallback.touch_haptics),
+        touch_mode: touch_mode.unwrap_or(fallback.touch_mode),
         vibration: vibration.unwrap_or(fallback.vibration),
     })
 }

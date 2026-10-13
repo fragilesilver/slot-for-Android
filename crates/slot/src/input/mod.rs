@@ -1,3 +1,4 @@
+pub mod axes;
 mod device;
 pub mod evdev;
 #[cfg(feature = "host")]

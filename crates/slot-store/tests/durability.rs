@@ -210,6 +210,7 @@ fn a_card_from_before_the_settings_keeps_all_its_values() {
             touch_opacity: 100,
             touch_size: 100,
             touch_haptics: true,
+            touch_mode: slot_store::TouchMode::Auto,
             vibration: 70,
         }
     );
@@ -231,6 +232,22 @@ fn the_x_and_y_button_roles_round_trip_and_default_to_turbo() {
     assert_eq!((back.x_button, back.y_button), (ButtonRole::B, ButtonRole::A));
     assert_eq!(ButtonRole::Turbo.step(true), ButtonRole::A);
     assert_eq!(ButtonRole::Turbo.step(false), ButtonRole::B);
+}
+
+#[test]
+fn the_touch_mode_round_trips_and_defaults_to_auto() {
+    use slot_store::TouchMode;
+    let d = tmp_root();
+    assert_eq!(read_slot_state(d.path()).touch_mode, TouchMode::Auto);
+    let s = SlotState {
+        clock_set: true,
+        touch_mode: TouchMode::Off,
+        ..SlotState::default()
+    };
+    write_slot_state(d.path(), &s).unwrap();
+    assert_eq!(read_slot_state(d.path()).touch_mode, TouchMode::Off);
+    assert_eq!(TouchMode::Auto.step(true), TouchMode::On);
+    assert_eq!(TouchMode::Auto.step(false), TouchMode::Off);
 }
 
 #[test]

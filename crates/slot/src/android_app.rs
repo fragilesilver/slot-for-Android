@@ -219,6 +219,7 @@ fn android_main(app: AndroidApp) {
         input.set_window(window);
         let (opacity, size) = frontend.app().touch_style();
         input.set_style(opacity, size);
+        input.set_mode(frontend.app().touch_mode());
         input.set_menu_mode(frontend.app().navigating());
         input.pump(&app);
         if frontend.app_mut().take_rescan() {

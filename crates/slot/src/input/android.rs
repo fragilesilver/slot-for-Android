@@ -1,7 +1,10 @@
 use android_activity::input::{InputEvent, KeyAction, Keycode, MotionAction};
 use android_activity::{AndroidApp, InputStatus};
+use android_activity::input::Axis;
+use slot_store::TouchMode;
 use slot_input::{Btn, InputSource, Millis, RawEvent};
 
+use super::axes;
 use crate::touch::{self, Zone};
 
 pub struct AndroidInput {
@@ -21,6 +24,9 @@ pub struct AndroidInput {
     size: f32,
     generation: u32,
     visible: bool,
+    /// Directions held by a pad's hat or stick (as opposed to `DPAD_*` keys).
+    axis_held: Vec<Btn>,
+    mode: TouchMode,
 }
 
 fn key_to_btn(code: Keycode) -> Option<Btn> {
@@ -63,6 +69,8 @@ impl AndroidInput {
             size: 1.0,
             generation: 0,
             visible: true,
+            axis_held: Vec::new(),
+            mode: TouchMode::Auto,
         }
     }
 
@@ -95,9 +103,19 @@ impl AndroidInput {
         self.generation
     }
 
-    /// False while a physical pad or keyboard is in use; a touch brings the controls back.
+    /// Whether the controls are drawn: always or never when pinned, and in Auto false while a
+    /// physical pad or keyboard is in use (a touch brings them back).
     pub fn overlay_visible(&self) -> bool {
-        self.visible
+        match self.mode {
+            TouchMode::Auto => self.visible,
+            TouchMode::On => true,
+            TouchMode::Off => false,
+        }
+    }
+
+    /// The player's Touch Controls setting.
+    pub fn set_mode(&mut self, mode: TouchMode) {
+        self.mode = mode;
     }
 
     /// Idle opacity scale for the on-screen controls.
@@ -168,6 +186,26 @@ impl AndroidInput {
         self.touch_held = want;
     }
 
+    /// Presses and releases the D-PAD directions a pad's axes call for.
+    fn set_axis_dirs(&mut self, want: &[Btn]) {
+        for &btn in want {
+            if !self.axis_held.contains(&btn) {
+                self.axis_held.push(btn);
+                if !self.held.contains(&btn) {
+                    self.held.push(btn);
+                    crate::latency::read();
+                    self.pending.push(RawEvent::Down(btn));
+                }
+            }
+        }
+        let gone: Vec<Btn> = self.axis_held.iter().copied().filter(|b| !want.contains(b)).collect();
+        for btn in gone {
+            self.axis_held.retain(|b| *b != btn);
+            self.held.retain(|b| *b != btn);
+            self.pending.push(RawEvent::Up(btn));
+        }
+    }
+
     /// Drains the activity's queued key events into slot's raw button stream.
     pub fn pump(&mut self, app: &AndroidApp) {
         let Ok(mut events) = app.input_events_iter() else {
@@ -176,6 +214,22 @@ impl AndroidInput {
         loop {
             let more = events.next(|event| {
                 if let InputEvent::MotionEvent(motion) = event {
+                    // A pad's hat or stick is not a finger: read it as a D-PAD and leave the
+                    // touch controls (and their visibility) alone.
+                    if u32::from(motion.source()) & axes::SOURCE_CLASS_JOYSTICK != 0 {
+                        let p = motion.pointer_at_index(0);
+                        let want = axes::dirs(
+                            p.axis_value(Axis::HatX),
+                            p.axis_value(Axis::HatY),
+                            p.axis_value(Axis::X),
+                            p.axis_value(Axis::Y),
+                        );
+                        if !want.is_empty() {
+                            self.visible = false;
+                        }
+                        self.set_axis_dirs(&want);
+                        return InputStatus::Handled;
+                    }
                     let lifted = match motion.action() {
                         MotionAction::Up | MotionAction::PointerUp => Some(motion.pointer_index()),
                         _ => None,
@@ -255,6 +309,7 @@ impl AndroidInput {
 
     /// Releases everything (window lost focus or went away) so no button stays stuck.
     pub fn release_all(&mut self) {
+        self.axis_held.clear();
         for btn in std::mem::take(&mut self.held) {
             self.pending.push(RawEvent::Up(btn));
         }

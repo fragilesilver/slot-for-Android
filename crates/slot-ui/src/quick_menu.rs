@@ -45,10 +45,11 @@ pub enum QuickRow {
     Backup,
     TouchHaptics,
     Vibration,
+    TouchMode,
 }
 
 impl QuickRow {
-    pub const ALL: [QuickRow; 38] = [
+    pub const ALL: [QuickRow; 39] = [
         QuickRow::FastForward,
         QuickRow::FastForwardSound,
         QuickRow::Screen,
@@ -87,6 +88,7 @@ impl QuickRow {
         QuickRow::Backup,
         QuickRow::TouchHaptics,
         QuickRow::Vibration,
+        QuickRow::TouchMode,
     ];
 
     /// The in-game pause menu (Android port): opened over a running game.
@@ -103,10 +105,11 @@ impl QuickRow {
     ];
 
     /// The pause menu's Controls page.
-    pub const CONTROLS: [QuickRow; 7] = [
+    pub const CONTROLS: [QuickRow; 8] = [
         QuickRow::TurboButtons,
         QuickRow::XButton,
         QuickRow::YButton,
+        QuickRow::TouchMode,
         QuickRow::TouchOpacity,
         QuickRow::TouchSize,
         QuickRow::TouchHaptics,
@@ -178,6 +181,7 @@ impl QuickRow {
             | QuickRow::TouchOpacity
             | QuickRow::TouchSize
             | QuickRow::TouchHaptics
+            | QuickRow::TouchMode
             | QuickRow::Vibration => &QuickRow::CONTROLS,
             _ => &QuickRow::MAIN,
         }
@@ -245,6 +249,7 @@ impl QuickRow {
             QuickRow::Backup => "Library",
             QuickRow::TouchHaptics => "Touch Haptics",
             QuickRow::Vibration => "Vibration",
+            QuickRow::TouchMode => "Touch Controls",
         }
     }
 
@@ -310,10 +315,11 @@ pub enum QuickValue {
     Percent70,
     Percent80,
     Percent120,
+    Auto,
 }
 
 impl QuickValue {
-    pub const ALL: [QuickValue; 28] = [
+    pub const ALL: [QuickValue; 29] = [
         QuickValue::Speed2,
         QuickValue::Speed3,
         QuickValue::Speed4,
@@ -342,6 +348,7 @@ impl QuickValue {
         QuickValue::Percent70,
         QuickValue::Percent80,
         QuickValue::Percent120,
+        QuickValue::Auto,
     ];
 
     pub fn index(self) -> usize {
@@ -378,6 +385,7 @@ impl QuickValue {
             QuickValue::Percent70 => "70%",
             QuickValue::Percent80 => "80%",
             QuickValue::Percent120 => "120%",
+            QuickValue::Auto => "Auto",
         }
     }
 
