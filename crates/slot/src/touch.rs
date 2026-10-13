@@ -22,6 +22,9 @@ fn pill(btn: Btn, cx: f32, cy: f32, w: f32, h: f32) -> Zone {
 /// True when the controls float over the game picture: a near-square window (an unfolded
 /// phone) has no room for side bars or a roomy band underneath.
 pub fn floats_over_game(window: (u32, u32)) -> bool {
+    if slot_gfx::is_portrait(window) {
+        return false;
+    }
     let (w, h) = (window.0 as f32, window.1 as f32);
     let scale = (w / GAME_W).min(h / GAME_H);
     let (gw, gh) = (GAME_W * scale, GAME_H * scale);
@@ -89,7 +92,13 @@ pub fn layout_sized(window: (u32, u32), size: f32) -> Vec<Zone> {
         zones.push(pill(Btn::Select, w * 0.40, gy1 - h * 0.035, (pw * 0.8) * size, (h * 0.045) * size));
         zones.push(pill(Btn::Start, w * 0.60, gy1 - h * 0.035, (pw * 0.8) * size, (h * 0.045) * size));
     } else {
-        let top = (h - gh) / 2.0 + gh;
+        // Held upright the picture hangs under the cutout strip; elsewhere it is centred.
+        let top = if slot_gfx::is_portrait(window) {
+            let (_, y, _, ph) = slot_gfx::portrait_rect(window);
+            (y + ph) as f32
+        } else {
+            (h - gh) / 2.0 + gh
+        };
         let free = (h - top).max(h * 0.2);
         let r = (w * 0.17).min(free * 0.24) * size;
         let pw = w * 0.32;
@@ -354,6 +363,31 @@ mod tests {
             };
             assert!(hit(&zones, x, y).contains(&want), "{want:?} unreachable when floating");
         }
+    }
+
+    #[test]
+    fn held_upright_the_picture_clears_the_cutout_and_the_controls_sit_under_it() {
+        for window in [(1080, 2520), (720, 1520), (1440, 3040)] {
+            assert!(slot_gfx::is_portrait(window), "{window:?}");
+            let (px, py, pw, ph) = slot_gfx::portrait_rect(window);
+            // Full width, and a strip kept clear at the top for the camera cutout.
+            assert_eq!((px, pw), (0, window.0 as i32));
+            assert!(py as f32 >= window.1 as f32 * 0.04, "{window:?} no room for the cutout");
+            // The window is drawn where the touch layer thinks the picture is.
+            let (_, gl_y, _, gl_h) = slot_gfx::blit_rect(window, 0.0);
+            assert_eq!(window.1 as i32 - gl_y - gl_h, py);
+            assert_eq!(gl_h, ph);
+            let zones = layout(window);
+            assert!(!floats_over_game(window));
+            for s in shapes(&zones, &[], 1.0) {
+                let [x, y, w, h] = s.rect;
+                assert!(x >= 0.0 && x + w <= window.0 as f32, "{window:?} {s:?} off the sides");
+                assert!(y + h <= window.1 as f32, "{window:?} {s:?} off the bottom");
+                assert!(y >= (py + ph) as f32 - 1.0, "{window:?} {s:?} over the picture");
+            }
+        }
+        // A near-square window is not portrait: the picture stays centred.
+        assert!(!slot_gfx::is_portrait((1968, 2184)));
     }
 
     #[test]

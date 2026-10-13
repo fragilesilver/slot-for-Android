@@ -29,7 +29,10 @@ pub use lcd3x::{lcd3x_factors, lcd3x_mask, ScreenEffect};
 pub use overlay::{Overlay, Shape};
 pub use pipeline::{SCALE, SRC_H, SRC_W, WHOLE_TEXTURE};
 pub use power::{screen_brightness, screen_scale, screen_width};
-pub use surface::{blit_rect, blit_rect_fit, fit_rect, fit_scale, GfxError, Surface, OUT_H, OUT_W};
+pub use surface::{
+    blit_rect, blit_rect_fit, fit_rect, fit_scale, is_portrait, portrait_rect, GfxError, Surface,
+    OUT_H, OUT_W,
+};
 
 /// Loads GL through `surface` and clears the frame to a flat colour (platform bring-up check).
 pub fn clear_screen(surface: &mut dyn Surface, rgb: (f32, f32, f32)) {

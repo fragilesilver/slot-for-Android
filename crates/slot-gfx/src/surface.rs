@@ -53,7 +53,28 @@ pub fn blit_rect_fit(panel: (u32, u32), shake: f32) -> (i32, i32, i32, i32) {
     )
 }
 
+/// A window clearly taller than it is wide: a phone held upright.
+pub fn is_portrait(window: (u32, u32)) -> bool {
+    window.1 as f32 >= window.0 as f32 * 1.25
+}
+
+/// The picture in a portrait window, rows counted from the top: full width, hung under a strip
+/// kept clear for the camera cutout and status bar (the system draws into the cutout when held
+/// upright), with the controls below it.
+pub fn portrait_rect(window: (u32, u32)) -> (i32, i32, i32, i32) {
+    let w = window.0 as i32;
+    let h = (w as f32 * OUT_H as f32 / OUT_W as f32).round() as i32;
+    let pad = (window.1 as f32 * 0.05).round() as i32;
+    (0, pad, w, h)
+}
+
 pub fn blit_rect(window: (u32, u32), shake: f32) -> (i32, i32, i32, i32) {
+    if is_portrait(window) {
+        let (x, y, w, h) = portrait_rect(window);
+        let dx = (shake * w as f32 / OUT_W as f32).round() as i32;
+        // GL counts rows from the bottom.
+        return (x + dx, window.1 as i32 - y - h, w, h);
+    }
     if crate::bezel::framed(window) {
         let (x, y, w, h) = crate::bezel::screen_rect(window);
         let dx = shake * w as f32 / OUT_W as f32;

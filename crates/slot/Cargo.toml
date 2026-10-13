@@ -1,6 +1,6 @@
 [package]
 name = "slot"
-version = "1.0.0"
+version = "1.0.1"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
@@ -70,7 +70,7 @@ has_code = true
 
 [package.metadata.android.application.activity]
 name = "com.fragilesilver.slot.SlotActivity"
-orientation = "landscape"
+orientation = "fullSensor"
 config_changes = "orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout|uiMode|density"
 
 [package.metadata.android.signing.release]
