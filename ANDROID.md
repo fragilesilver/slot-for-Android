@@ -5,7 +5,7 @@ Package id `com.fragilesilver.slot`. Forked in Brunei Darussalam, by a cat with 
 
 A fork of [BrandonKowalski/slot](https://github.com/BrandonKowalski/slot). Claude (Anthropic), through Claude Code,
 helped with forking it to Android: the shell, touch controls, Edit Cart, library, packaging and these docs. I directed
-it, tested it on my own Samsung Z Fold 7 and decided what shipped.
+it, tested it on my own Samsung Z Fold 7 and Galaxy S10+ and decided what shipped.
 
 ## Credits
 
@@ -24,7 +24,8 @@ it, tested it on my own Samsung Z Fold 7 and decided what shipped.
 ## Setting up
 
 1. Install the APK and open it. When asked, allow **All files access**; slot then keeps everything
-   in `/sdcard/slot/` where a file manager or a cable can reach it.
+   in `/sdcard/slot/` where a file manager or a cable can reach it. The page is offered at every
+   launch until it is granted; without it slot shows an empty shelf from its private folder.
 2. Put your games in `Games/GBA`, `Games/GB` and `Games/GBC` (unzipped `.gba`, `.gb`, `.gbc`),
    or use **Library > Import games from Downloads**.
 3. Open slot again if you added files by hand; the shelf is built when the app starts.
@@ -37,7 +38,12 @@ it, tested it on my own Samsung Z Fold 7 and decided what shipped.
   Date & Time, About.
 - **In game:** Menu opens the pause menu (save / load state, states, core, controls, screen,
   cheats, achievements, back to shelf).
-- **Controls page:** turbo, what X and Y do, controls opacity and size, touch haptics.
+- **Controls page:** turbo, what X and Y do, Touch Controls (Auto hides the overlay while a pad or
+  keyboard is used, On and Off pin it), controls opacity and size, touch haptics, vibration.
+- **Controllers:** the D-pad and left stick work as the D-pad; face and shoulder buttons use the
+  standard Android keycodes. There is no remapping yet. Back acts as Menu.
+- **Rotation:** follows the sensor in landscape and portrait. In portrait the picture sits under a
+  strip kept clear for the camera cutout and the controls are below it.
 - **Edit Cart:** change the shell colour, finish and outline of the cart under the caret; the
   choice is written to `Labels/cart_shell.txt` (the file Cart Studio produces, which wins over
   `Config/cart_shell.txt`). **Picture** opens your gallery (Left/Right switches it to the newest PNG/JPEG in
@@ -57,7 +63,7 @@ Backups hold `Saves`, `States`, `Cheats` and `Labels/cart_shell.txt`; they leave
 
 ## Not in this release
 
-Link play, custom label art from the gallery, a free-form layout editor for the controls.
+Link play, controller button remapping, a free-form layout editor for the controls.
 
 ## Building
 

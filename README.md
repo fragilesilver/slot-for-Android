@@ -42,12 +42,12 @@ This release maintains the core identity of `slot`—its signature 3D cart anima
 | Component | Upstream (The Author) | Android Port |
 |---|---|---|
 | **Community Upgrades** | Not included | Integrates retro color profiles, display blending, cheat management, RetroAchievements support, and LaunchBox box art (adapted from implementations by pvaibhav and RetroGame66, rebuilt natively for `slot`'s layout) |
-| **Controls & Input** | Physical handheld buttons | Fully configurable on-screen touch overlay (D-pad, A/B/X/Y, L/L2/R/R2, Select, Start, and Menu with scale and transparency sliders), plus external controller and keyboard mapping. Supports L2 rewinding and lockable R2 fast-forwarding (double-tap to hold) |
+| **Controls & Input** | Physical handheld buttons | On-screen touch overlay (D-pad, A/B/X/Y, L/L2/R/R2, Select, Start, and Menu) with adjustable size and opacity, plus external controllers (D-pad, left stick, face and shoulder buttons) and keyboard. A Touch Controls setting (Auto, On, Off) hides the overlay while a pad is in use. Supports L2 rewinding and lockable R2 fast-forwarding (double-tap to hold) |
 | **Cartridge Theming** | Populated via desktop Cart Studio files | On-device Cart Editor: customize shell plastics, finish textures, borders, custom typography, or import photos straight from your device gallery (with a quick-reset toggle to return to defaults) |
 | **Tactile Feedback** | Internal handheld motor rumble | Mobile vibration support for both UI touch haptics and in-game force feedback, complete with adjustable intensity |
 | **Link Play** | Hardware link cables and local Wi-Fi | Omitted for now; a mobile-compatible Wi-Fi link system is in development |
 | **Excluded Features** | Hardware status LEDs, clamshell physical lid detection, and handheld standby hooks | Replaced with standard mobile operating system lifecycle and window handling |
-| **Target Platform** | Specialized Linux handhelds (framebuffer output) | 64-bit Android (`arm64`), featuring smooth real-time fold and unfold layout transitions |
+| **Target Platform** | Specialized Linux handhelds (framebuffer output) | 64-bit Android (`arm64`), with smooth real-time fold and unfold layout transitions, landscape and portrait (picture under a camera-cutout-safe strip, controls below), and auto-rotate |
 | **Storage Architecture** | MicroSD card directories | Accessible via `/sdcard/slot/`, paired with a dedicated Library interface to manage exports, restorations, and direct ROM imports from your Downloads folder |
 
 For complete implementation notes, dependency setups, and technical credits, check [ANDROID.md](ANDROID.md). A comprehensive breakdown of updates is tracked in [CHANGELOG.md](CHANGELOG.md).
@@ -65,7 +65,15 @@ For complete implementation notes, dependency setups, and technical credits, che
 
 ## Device Compatibility
 
-This mobile build targets 64-bit ARM (`arm64`) Android smartphones and foldables (actively validated on a Samsung Galaxy Z Fold 7 since version 1.0.0).
+This mobile build targets 64-bit ARM (`arm64`) Android 8.0+ smartphones and foldables.
+
+| Device | Android | Status | Since |
+|---|---|---|---|
+| Samsung Galaxy Z Fold 7 | 16 | Tested | 1.0.0 |
+| Samsung Galaxy S10+ | 12 | Tested | 1.0.1 |
+| Other arm64 phones and foldables | 8.0+ | Should work, untested | - |
+
+Controllers: the D-pad, left stick and standard button keycodes work without setup; button remapping is not in the app yet. Version 1.0.1 installs over 1.0.0 and keeps your saves and settings.
 
 If you test this Android release on unlisted hardware or different aspect ratios, please open an issue on GitHub to share your results.
 
@@ -77,7 +85,7 @@ If you test this Android release on unlisted hardware or different aspect ratios
 The primary Rust frontend was created with assistance from Claude Opus, with every line reviewed and maintained by the author. Upstream documentation was hand-crafted. The project was built as a passion project to relive the feel of the GBA SP, offered freely to the community.
 
 ### Android Port
-The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7), and release decisions were driven manually.
+The Android translation was developed with assistance from Anthropic's Claude (via Claude Code), which helped author the Android runtime wrapper, on-screen controls, Cart Editor UI, Library file system hooks, package setup, and mobile documentation (`ANDROID.md` and `CHANGELOG.md`). Architecture choices, on-device validation (tested on hardware using a Galaxy Z Fold 7 and a Galaxy S10+), and release decisions were driven manually.
 
 ---
 
