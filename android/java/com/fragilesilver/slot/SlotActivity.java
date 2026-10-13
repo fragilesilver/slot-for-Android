@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.view.View;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,6 +25,24 @@ public class SlotActivity extends NativeActivity {
     private static final int PICK = 7001;
     private static final int LIMIT = 2048;
     private String dest;
+
+    /**
+     * Keeps the navigation and status bars out of the way, so the on-screen buttons are not
+     * under the system's three-button bar (they come back for a moment on an edge swipe).
+     */
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
 
     public void pickPicture(final String to) {
         dest = to;
