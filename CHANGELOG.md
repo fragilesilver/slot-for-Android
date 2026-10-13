@@ -1,5 +1,21 @@
 # Changelog
 
+## [slot for Android 1.0.1](https://github.com/fragilesilver/slot-for-Android/releases/tag/android-v1.0.1)
+
+Fixes for phones the first build was not tried on, controller support, and portrait.
+
+**Fixed**
+- Games would not start on some phones (Galaxy S10+, Android 12): the cores were bundled under names Android's installer does not unpack, so slot ran its test pattern. They now ship as `libmgba_libretro.so` and `libgpsp_libretro.so`.
+- Box art did not download on Android 12 shared storage (the label file was refused with "Permission denied").
+- Controller D-PAD did nothing on pads that report it as a hat axis. The D-PAD and left stick now work, diagonals included, and a pad no longer brings the touch controls back.
+- The navigation buttons covered the on-screen controls on phones with a three-button bar: the system bars are now hidden (swipe from the edge to show them).
+- A reinstall could leave a blank shelf with no permission prompt (the once-per-install marker came back from Google backup). The All files access page is now offered at every launch until it is granted.
+
+**New**
+- Portrait mode: held upright the picture is full width under a strip kept clear for the camera cutout, with the controls below it.
+- Auto-rotate: the app follows the sensor in every direction, so a clamp controller no longer leaves it upside down.
+- Controls > Touch Controls: Auto (hide while a pad or keyboard is used, show on touch), On, Off.
+
 ## [slot for Android 1.0.0](https://github.com/fragilesilver/slot-for-Android/releases/tag/android-v1.0.0)
 
 First release of the Android port, built on slot 1.6.0.
@@ -8,7 +24,6 @@ First release of the Android port, built on slot 1.6.0.
 - Runs slot on an Android phone or foldable: the shelf, cartridges, slot animation, cores (mGBA and gpSP), saves, states, rewind, fast-forward and the quick menu.
 - On-screen controls laid out for the screen (side bars, below the picture, or floating over it when unfolded), plus gamepad and keyboard. The shoulder row is L, L2, R2, R: hold R2 to fast forward (double-tap to lock it on), hold L2 to rewind. Opacity and size are adjustable; touch haptics can be switched off.
 - First launch after an install: the menus no longer come up blank once All files access has been granted.
-- The All files access page is offered on every launch until it is granted, so a reinstall can no longer leave a blank shelf without asking.
 - Fullscreen, with the Menu button at the top centre. Leaving the app and coming back keeps everything as it was.
 - Games and everything else live in `/sdcard/slot/` once All files access is granted.
 - Pause menu in game: save / load state, browse states, change core, controls, screen, cheats, achievements, back to shelf.
