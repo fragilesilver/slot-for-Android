@@ -7,7 +7,15 @@ cd "$(dirname "$0")/../crates/slot"
 export ANDROID_HOME="${ANDROID_HOME:-$HOME/Android/Sdk}" ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$HOME/Android/Sdk}"
 export ANDROID_NDK_HOME="${ANDROID_NDK_HOME:-$ANDROID_HOME/ndk/27.2.12479018}"
 export RUSTFLAGS="-C link-arg=-Wl,-z,max-page-size=16384 ${RUSTFLAGS:-}"
-[ -f android-libs/arm64-v8a/mgba_libretro.so ] || echo "note: no core in crates/slot/android-libs (run cores/mgba/build-android.sh)" >&2
+# Android's installer unpacks only lib*.so from an APK, so the cores must carry that prefix or
+# they are never extracted (the app then falls back to its test pattern).
+for c in mgba gpsp; do
+    d=android-libs/arm64-v8a
+    if [ -f "$d/${c}_libretro.so" ] && [ ! -f "$d/lib${c}_libretro.so" ]; then
+        mv "$d/${c}_libretro.so" "$d/lib${c}_libretro.so"
+    fi
+done
+[ -f android-libs/arm64-v8a/libmgba_libretro.so ] || echo "note: no core in crates/slot/android-libs (run cores/mgba/build-android.sh)" >&2
 PROFILE_FLAG=""
 if [ "${SLOT_RELEASE:-}" = 1 ]; then
     PROFILE_FLAG="--release"

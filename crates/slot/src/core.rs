@@ -47,7 +47,10 @@ fn candidates(root: &Path, core: Core) -> Vec<PathBuf> {
     paths.push(Path::new("vendor").join(&name));
     #[cfg(target_os = "android")]
     if let Some(dir) = android_lib_dir() {
+        // Android unpacks only `lib*.so` from an APK, so the cores ship as `lib<name>`; the
+        // plain name stays as a fallback for a core sideloaded beside libslot.so.
         paths.insert(0, dir.join(&name));
+        paths.insert(0, dir.join(format!("lib{name}")));
     }
     paths
 }
